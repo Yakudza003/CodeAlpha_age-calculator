@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Age Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .title {
+            color: #333;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1rem;
+            margin-bottom: 30px;
+            font-weight: 300;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            color: #333;
+            font-weight: 500;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
+            background: #fff;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #6c757d;
+            border: 2px solid #e9ecef;
+        }
+
+        .btn-secondary:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+        }
+
+        .result-container {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 20px;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+
+        .result-container.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .result {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        .result-icon {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            border-left: 4px solid #c33;
+            font-weight: 500;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+
+        .error-message.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .success-message {
+            background: #efe;
+            color: #3c3;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            border-left: 4px solid #3c3;
+            font-weight: 500;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+
+        .success-message.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 30px 20px;
+            }
+            
+            .title {
+                font-size: 2rem;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .result {
+                font-size: 1.1rem;
+            }
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">
+            <i class="fas fa-calculator"></i>
+            Age Calculator
+        </h1>
+        <p class="subtitle">Discover your exact age in years, months, and days</p>
+        
+        <form id="ageForm">
+            <div class="form-group">
+                <label for="birthDate">
+                    <i class="fas fa-calendar-alt"></i>
+                    Date of Birth
+                </label>
+                <input type="date" id="birthDate" name="birthDate" required>
+            </div>
+            
+            <div class="button-group">
+                <button type="submit" class="btn btn-primary" id="calculateBtn">
+                    <i class="fas fa-calculator"></i>
+                    Calculate Age
+                </button>
+                <button type="button" class="btn btn-secondary" id="resetBtn">
+                    <i class="fas fa-redo"></i>
+                    Reset
+                </button>
+            </div>
+        </form>
+        
+        <div id="messageContainer"></div>
+        
+        <div class="result-container" id="resultContainer">
+            <div class="result" id="result">
+                <div class="result-icon">
+                    <i class="fas fa-birthday-cake"></i>
+                </div>
+                <div>Enter your date of birth and click "Calculate Age" to see your exact age!</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class AgeCalculator {
+            constructor() {
+                this.form = document.getElementById('ageForm');
+                this.birthDateInput = document.getElementById('birthDate');
+                this.calculateBtn = document.getElementById('calculateBtn');
+                this.resetBtn = document.getElementById('resetBtn');
+                this.resultContainer = document.getElementById('resultContainer');
+                this.result = document.getElementById('result');
+                this.messageContainer = document.getElementById('messageContainer');
+                
+                this.initializeEventListeners();
+                this.setMaxDate();
+            }
+            
+            initializeEventListeners() {
+                this.form.addEventListener('submit', (e) => this.handleSubmit(e));
+                this.resetBtn.addEventListener('click', () => this.resetForm());
+            }
+            
+            setMaxDate() {
+                // Set maximum date to today
+                const today = new Date().toISOString().split('T')[0];
+                this.birthDateInput.setAttribute('max', today);
+            }
+            
+            handleSubmit(e) {
+                e.preventDefault();
+                this.clearMessages();
+                
+                const birthDate = this.birthDateInput.value;
+                
+                if (!birthDate) {
+                    this.showError('Please select your date of birth.');
+                    return;
+                }
+                
+                this.calculateAge(birthDate);
+            }
+            
+            calculateAge(birthDateString) {
+                this.showLoading();
+                
+                // Simulate a small delay for better UX
+                setTimeout(() => {
+                    try {
+                        const birthDate = new Date(birthDateString);
+                        const today = new Date();
+                        
+                        // Validate date
+                        if (birthDate > today) {
+                            this.showError('Date of birth cannot be in the future.');
+                            return;
+                        }
+                        
+                        if (birthDate.getFullYear() < 1900) {
+                            this.showError('Please enter a valid date of birth.');
+                            return;
+                        }
+                        
+                        const age = this.calculateExactAge(birthDate, today);
+                        this.displayResult(age);
+                        
+                    } catch (error) {
+                        this.showError('Please enter a valid date.');
+                    }
+                }, 500);
+            }
+            
+            calculateExactAge(birthDate, today) {
+                let years = today.getFullYear() - birthDate.getFullYear();
+                let months = today.getMonth() - birthDate.getMonth();
+                let days = today.getDate() - birthDate.getDate();
+                
+                // Adjust for negative days
+                if (days < 0) {
+                    months--;
+                    const lastMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+                    days += lastMonth.getDate();
+                }
+                
+                // Adjust for negative months
+                if (months < 0) {
+                    years--;
+                    months += 12;
+                }
+                
+                return { years, months, days };
+            }
+            
+            displayResult(age) {
+                const { years, months, days } = age;
+                
+                let resultText = `You are <strong>${years}</strong> year${years !== 1 ? 's' : ''}, `;
+                resultText += `<strong>${months}</strong> month${months !== 1 ? 's' : ''}, `;
+                resultText += `and <strong>${days}</strong> day${days !== 1 ? 's' : ''} old.`;
+                
+                this.result.innerHTML = `
+                    <div class="result-icon">
+                        <i class="fas fa-birthday-cake"></i>
+                    </div>
+                    <div>${resultText}</div>
+                `;
+                
+                this.resultContainer.classList.add('show');
+                this.showSuccess('Age calculated successfully!');
+            }
+            
+            showLoading() {
+                this.calculateBtn.innerHTML = '<div class="loading"></div> Calculating...';
+                this.calculateBtn.disabled = true;
+            }
+            
+            hideLoading() {
+                this.calculateBtn.innerHTML = '<i class="fas fa-calculator"></i> Calculate Age';
+                this.calculateBtn.disabled = false;
+            }
+            
+            showError(message) {
+                this.hideLoading();
+                this.messageContainer.innerHTML = `
+                    <div class="error-message show">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        ${message}
+                    </div>
+                `;
+                this.resultContainer.classList.remove('show');
+            }
+            
+            showSuccess(message) {
+                this.hideLoading();
+                this.messageContainer.innerHTML = `
+                    <div class="success-message show">
+                        <i class="fas fa-check-circle"></i>
+                        ${message}
+                    </div>
+                `;
+            }
+            
+            clearMessages() {
+                this.messageContainer.innerHTML = '';
+            }
+            
+            resetForm() {
+                this.form.reset();
+                this.clearMessages();
+                this.resultContainer.classList.remove('show');
+                this.result.innerHTML = `
+                    <div class="result-icon">
+                        <i class="fas fa-birthday-cake"></i>
+                    </div>
+                    <div>Enter your date of birth and click "Calculate Age" to see your exact age!</div>
+                `;
+                this.hideLoading();
+            }
+        }
+        
+        // Initialize the age calculator when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new AgeCalculator();
+        });
+    </script>
+</body>
+</html>
